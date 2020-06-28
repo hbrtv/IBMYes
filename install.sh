@@ -44,6 +44,7 @@ install(){
     echo "安装完成。"
 }
 
+
 clone_repo
 create_mainfest_file
 install
