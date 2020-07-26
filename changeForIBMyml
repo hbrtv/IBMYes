@@ -56,3 +56,21 @@ jobs:
 伦敦地区的，把包含eu-gb的那一行命令取消注释。
 
 然后start commit就完事了。
+
+下面我的理解，请大佬指定，有错误的说下：
+CF_UUID_IBM=设定的UUID
+CF_WSPATH_IBM=V2的path
+CF_ROUTE_IBM=这个到哪里找到？？？？？？？？？？
+CF_WORKER_NAME_CF=cloudflare里面建立works起的名称
+CF_ACCOUNT_ID_CF=cloudflare里works里的帐户 ID
+CF_USER_IBM=IBM的用户名
+CF_PASSWORD_IBM=IBM的密码
+CF_ORG_IBM=IBM的组织名
+CF_SPACE_IBM=IBM的空间名
+CF_API_KEY_CF=cloudflare的API 密钥--Global API Key
+CF_EMAIL_CF=cloudflare的邮箱
+
+myapp.mybluemix.net
+
+
+https://www.cloudflare.com/ips/
