@@ -1,0 +1,58 @@
+name: IBM Cloud Auto Restart
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '00 22 * * 3'
+
+jobs:
+  ibm-cloud-restart:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Init
+      run: |
+        chmod -R 777 ./IBM_Cloud_CLI/
+    - name: Login IBM Cloud
+      env:
+        IBM_ACCOUNT: ${{ secrets.IBM_ACCOUNT }}
+        REGION_NUM: ${{ secrets.REGION_NUM }}
+      run: |
+        pwd
+        /home/runner/work/IBMYes/IBMYes/IBM_Cloud_CLI/ibmcloud login <<EOF
+        $IBM_ACCOUNT
+        $REGION_NUM
+        no
+        EOF
+    - name: Target IBM Cloud
+      env:
+        RESOURSE_ID: ${{ secrets.RESOURSE_ID }}
+        IBM_APP_NAME: ${{ secrets.IBM_APP_NAME }}
+      run: |
+        rm -rf v2ray-cloudfoundry
+        git clone https://github.com/a132395/v2ray-cloudfoundry.git
+        chmod +x /home/runner/work/IBMYes/IBMYes/v2ray-cloudfoundry/v2ray/*
+        cd v2ray-cloudfoundry
+        sed -i "s/GetStartedGo/${{ secrets.IBM_APP_NAME }}/g"  /home/runner/work/IBMYes/IBMYes/v2ray-cloudfoundry/manifest.yml
+        #sed -i "s/8c35bef3-d51f-41ab-ac87-7b053410495b/${{ secrets.UUID }}/g"  /home/runner/work/IBMYes/IBMYes/v2ray-cloudfoundry/v2ray/config.json
+        #sed -i "s:/:${{ secrets.PATH }}:"  /home/runner/work/IBMYes/IBMYes/v2ray-cloudfoundry/v2ray/config.json
+        sed -i "s/128/256/g"  /home/runner/work/IBMYes/IBMYes/v2ray-cloudfoundry/manifest.yml
+        #/home/runner/work/IBMYes/IBMYes/IBM_Cloud_CLI/ibmcloud target -r eu-gb
+        /home/runner/work/IBMYes/IBMYes/IBM_Cloud_CLI/ibmcloud target -g "$RESOURSE_ID"
+        /home/runner/work/IBMYes/IBMYes/IBM_Cloud_CLI/ibmcloud target --cf
+        /home/runner/work/IBMYes/IBMYes/IBM_Cloud_CLI/ibmcloud cf install
+        /home/runner/work/IBMYes/IBMYes/IBM_Cloud_CLI/ibmcloud cf push
+       
+      
+ 想要修改UUID的，先在Secrets里添加名为UUID 的secret，然后在把包含UUID的那一行sed命令取消注释。
+
+想要修改PATH的，先在Secrets里添加名为PATH 的secret(格式为:/你想要的路径)，然后在把包含PATH的那一行sed命令取消注释。
+
+伦敦地区的，把包含eu-gb的那一行命令取消注释。
+
+然后start commit就完事了。
